@@ -53,7 +53,18 @@ namespace LbDesyatov1
             }
             else
             {
-                Console.WriteLine($"Минимальное число: {numbers.Min()}");
+                int minNumber = numbers[0];
+
+                // Проходим по всем остальным числам в списке
+                foreach (int number in numbers)
+                {
+                    if (number < minNumber)
+                    {
+                        minNumber = number; // Нашли новое минимальное число
+                    }
+                }
+
+                Console.WriteLine($"Минимальное число: {minNumber}");
             }
 
             Console.WriteLine("Нажмите Enter для завершения.");
