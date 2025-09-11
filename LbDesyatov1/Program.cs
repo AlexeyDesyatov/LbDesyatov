@@ -60,7 +60,7 @@ namespace LbDesyatov1
                 {
                     if (number < minNumber)
                     {
-                        minNumber = number; // Нашли новое минимальное число
+                        minNumber = number; // Нашли новое минимальное число/
                     }
                 }
 
