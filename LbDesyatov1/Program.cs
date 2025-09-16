@@ -55,6 +55,7 @@ namespace LbDesyatov1
             Console.WriteLine("Тест 4: 0x² + 2x + 3 = 0");
             Console.WriteLine(SolveQuadratic(0, 2, 3));
             Console.WriteLine();
+            Console.Read();
 
   
         }
