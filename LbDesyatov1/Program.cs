@@ -20,7 +20,6 @@ namespace LbDesyatov1
             }
             Console.WriteLine();
 
-
             // Пузырьковая сортировка
             int[] bubbleArr = original.ToArray();
             BubbleSort(bubbleArr);
@@ -43,16 +42,7 @@ namespace LbDesyatov1
                 if (i < cocktailArr.Length - 1) Console.Write(", ");
             }
             Console.WriteLine();
-
-            // Проверка через встроенную сортировку
-            int[] expected = original.OrderBy(x => x).ToArray();
-            bool bubbleOk = bubbleArr.SequenceEqual(expected);
-            bool cocktailOk = cocktailArr.SequenceEqual(expected);
-
-            Console.WriteLine("\n✅ Проверка:");
-            Console.WriteLine($"Пузырьковая корректна: {bubbleOk}");
-            Console.WriteLine($"Шейкерная корректна:   {cocktailOk}");
-            Console.Read();
+            Console.ReadKey();
         }
 
         static void BubbleSort(int[] a)
