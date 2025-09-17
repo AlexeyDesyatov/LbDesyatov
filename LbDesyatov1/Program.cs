@@ -8,40 +8,29 @@ namespace LbDesyatov1
 {
     internal class Program
     {
-        static double GetGeo(double b1, double q, int n)
+        static double pow(double x, int n)
         {
-            return b1 * Math.Pow(q, n - 1);
+            // Базовый случай: если n = 0, возвращаем 1
+            if (n == 0)
+                return 1;
+
+            // Если n < 0, используем правило: x^n = 1 / x^|n|
+            if (n < 0)
+                return 1 / pow(x, -n);
+
+            // Если n > 0, используем рекурсию: x^n = x * x^(n-1)
+            return x * pow(x, n - 1);
         }
 
-        static double GetSumGeo(double b1, double q, int n)
+        static void Main()
         {
-            if (q == 1)
-                return b1 * n;
-            return b1 * (Math.Pow(q, n) - 1) / (q - 1);
+            // Примеры использования
+            Console.WriteLine($"2^3 = {pow(2, 3)}");     // 8
+            Console.WriteLine($"2^-2 = {pow(2, -2)}");   // 0.25
+            Console.WriteLine($"5^0 = {pow(5, 0)}");     // 1
+            Console.WriteLine($"3^-1 = {pow(3, -1)}");   // ~0.333...
+            Console.Read();
         }
-
-        static void Main(string[] args)
-        {
-            Console.WriteLine("=== Геометрическая прогрессия ===");
-
-            Console.Write("Введите первый член (b1): ");
-            double b1 = double.Parse(Console.ReadLine());
-
-            Console.Write("Введите знаменатель (q): ");
-            double q = double.Parse(Console.ReadLine());
-
-            Console.Write("Введите количество членов (n): ");
-            int n = int.Parse(Console.ReadLine());
-
-            double nthTerm = GetGeo(b1, q, n);
-            double sum = GetSumGeo(b1, q, n);
-
-            Console.WriteLine($"\n{n}-й член прогрессии: {nthTerm}");
-            Console.WriteLine($"Сумма первых {n} членов: {sum}");
-
-            Console.WriteLine("\nНажмите любую клавишу...");
-            Console.ReadKey();
-        }
+            
     }
-
 }
