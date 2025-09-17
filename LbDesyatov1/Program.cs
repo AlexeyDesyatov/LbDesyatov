@@ -16,7 +16,7 @@ namespace LbDesyatov1
             for (int i = 0; i < original.Length; i++)
             {
                 Console.Write(original[i]);
-                if (i < original.Length - 1) Console.Write(", ");
+                if (i < original.Length) Console.Write(", ");
             }
             Console.WriteLine();
 
@@ -28,7 +28,7 @@ namespace LbDesyatov1
             for (int i = 0; i < bubbleArr.Length; i++)
             {
                 Console.Write(bubbleArr[i]);
-                if (i < bubbleArr.Length - 1) Console.Write(", ");
+                if (i < bubbleArr.Length ) Console.Write(", ");
             }
             Console.WriteLine();
 
@@ -39,7 +39,7 @@ namespace LbDesyatov1
             for (int i = 0; i < cocktailArr.Length; i++)
             {
                 Console.Write(cocktailArr[i]);
-                if (i < cocktailArr.Length - 1) Console.Write(", ");
+                if (i < cocktailArr.Length) Console.Write(", ");
             }
             Console.WriteLine();
             Console.ReadKey();
