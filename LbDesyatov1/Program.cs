@@ -25,7 +25,7 @@ namespace LbDesyatov1
         // Метод для вывода информации о багаже
         public void PrintInfo()
         {
-            Console.WriteLine($"Пункт назначения: - {dist}, Номер рейса - {number} кг, Тип самаолета - {plane} кг");
+            Console.WriteLine($"Пункт назначения: - {dist}, Номер рейса - {number}, Тип самаолета - {plane}");
         }
     }
 
@@ -42,11 +42,13 @@ namespace LbDesyatov1
 
             Console.WriteLine("Исходный массив:");
 
-            for (int i = 1; i < PlaneList.Length; i++)
+            for (int i = 0; i < PlaneList.Length; i++)
             {
-                Console.WriteLine($"Багаж {i}");
+                Console.WriteLine($"Пункт {i}");
                 input1 = Console.ReadLine();
+                Console.WriteLine($"Номер {i}");
                 input2 = int.Parse(Console.ReadLine());
+                Console.WriteLine($"Тип {i}");
                 input3 = Console.ReadLine();
                 PlaneList[i] = new Aeroflot(input1, input2, input3);
 
@@ -56,7 +58,10 @@ namespace LbDesyatov1
             string output ="";
             for (int i = 0; i < PlaneList.Length; i++)
             {
-                output += PlaneList[i].dist + "|" + PlaneList[i].number + "|" + PlaneList[i].plane + "\n";
+                output += $"Город: {PlaneList[i].dist}\n";
+                output += $"Номер рейса: {PlaneList[i].number}\n";
+                output += $"Тип самолета: {PlaneList[i].plane}\n";
+                output += "\n"; 
             }
 
             using (FileStream fstream = new FileStream(filePath, FileMode.OpenOrCreate))
@@ -68,12 +73,30 @@ namespace LbDesyatov1
                 // запись массива байтов в файл
                 fstream.Write(array, 0, array.Length);
                 Console.WriteLine("Текст записан в файл");
-
  
             }
+            // === ЧТЕНИЕ ИЗ ФАЙЛА И ВЫВОД НА ЭКРАН ===
+            string fileContent;
+            using (FileStream fs = File.OpenRead(filePath))
+            {
+                byte[] buffer = new byte[fs.Length];
+                fs.Read(buffer, 0, buffer.Length);
+                fileContent = Encoding.Default.GetString(buffer);
+            }
 
-
+            string[] lines = fileContent.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (string line in lines)
+            {
+                Console.WriteLine(line); // просто выводим каждую строку как есть
+            }
+            Console.WriteLine("=== Данные из файла ===");
+            Console.WriteLine(fileContent);
+            Console.WriteLine("========================");
+            Console.WriteLine($"Файл сохранён по пути: {filePath}");
+            Console.Read();
         }
-    }   
+
+    }
+       
 }
 
