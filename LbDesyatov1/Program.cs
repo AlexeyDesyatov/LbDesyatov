@@ -35,30 +35,24 @@ namespace LbDesyatov1
         static async Task Main()
         {
             // Создаем массив
-            string input1;
-            int input2;
-            string input3;
 
-            Aeroflot[] PlaneList = new Aeroflot[2];
+            Aeroflot[] PlaneList = new Aeroflot[7];
 
             Console.WriteLine("Исходный массив:");
 
+            Console.WriteLine("Введите 7 строк в формате: Пункт,Номер,Тип (например: Москва,100,Boeing)");
             for (int i = 0; i < PlaneList.Length; i++)
             {
-                Console.WriteLine($"Пункт {i}");
-                input1 = Console.ReadLine();
-                Console.WriteLine($"Номер {i}");
-                input2 = int.Parse(Console.ReadLine());
-                Console.WriteLine($"Тип {i}");
-                input3 = Console.ReadLine();
-                PlaneList[i] = new Aeroflot(input1, input2, input3);
-
+                string line = Console.ReadLine();
+                string[] parts = line.Split(',');
+                PlaneList[i] = new Aeroflot(parts[0], int.Parse(parts[1]), parts[2]);
             }
 
             string filePath = @"C:\Users\avd55\Desktop\Note.txt";
             string output ="";
             for (int i = 0; i < PlaneList.Length; i++)
             {
+                output += $"Рейс-{i + 1}\n";
                 output += $"Город: {PlaneList[i].dist}\n";
                 output += $"Номер рейса: {PlaneList[i].number}\n";
                 output += $"Тип самолета: {PlaneList[i].plane}\n";
@@ -76,40 +70,44 @@ namespace LbDesyatov1
                 Console.WriteLine("Текст записан в файл");
  
             }
-            // === ЧТЕНИЕ ИЗ ФАЙЛА И ВЫВОД НА ЭКРАН ===
-            
+            // ЧТЕНИЕ ИЗ ФАЙЛА
+
+            string text;
             using (StreamReader reader = new StreamReader(filePath, Encoding.UTF8))
             {
-                string text = await reader.ReadToEndAsync();
+                text = await reader.ReadToEndAsync();
                 Console.WriteLine(text);
 
             }
             Console.Write("\nВведите тип самолёта для поиска: ");
             string searchPlane = Console.ReadLine();
 
-            // Читаем весь файл
-            string fileContent;
-            using (StreamReader reader = new StreamReader(filePath, Encoding.UTF8))
-            {
-                fileContent = await reader.ReadToEndAsync();
-            }
-
-
             string pattern =
                 @"Город:\s*(?<city>.+?)\r?\n" +
                 @"Номер рейса:\s*(?<number>\d+)\r?\n" +
-                $@"Тип самолета:\s*{Regex.Escape(searchPlane)}";
+                $@"Тип самолета:\s*{searchPlane}";
 
-            var matches = Regex.Matches(fileContent, pattern, RegexOptions.Multiline);
+            var matches = Regex.Matches(text, pattern, RegexOptions.Multiline);
 
             if (matches.Count > 0)
             {
                 Console.WriteLine($"\nНайдены рейсы для самолёта '{searchPlane}':");
-                foreach (Match match in matches)
+                var flights = new (string city, string number)[matches.Count];
+                for (int i = 0; i < matches.Count; i++)
                 {
-                    string city = match.Groups["city"].Value;
-                    string number = match.Groups["number"].Value;
-                    Console.WriteLine($"Пункт назначения: {city}, Номер рейса: {number}");
+                    flights[i] = (
+                        matches[i].Groups["city"].Value,
+                        matches[i].Groups["number"].Value
+                    );
+                }
+
+                // Сортируем по городу (алфавит)
+                Array.Sort(flights, (a, b) => string.Compare(a.city, b.city, StringComparison.Ordinal));
+
+                // Выводим
+                foreach (var trip in flights)
+                {
+                    Console.WriteLine($"Пункт назначения: {trip.city}, Номер рейса: {trip.number}");
                 }
             }
             else
