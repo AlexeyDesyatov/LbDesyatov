@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -31,7 +32,7 @@ namespace LbDesyatov1
 
     class Program
     {
-        static void Main()
+        static async Task Main()
         {
             // Создаем массив
             string input1;
@@ -68,7 +69,7 @@ namespace LbDesyatov1
             {
                 // преобразуем строку в байты 
 
-                byte[] array = System.Text.Encoding.Default.GetBytes(output);
+                byte[] array = System.Text.Encoding.UTF8.GetBytes(output);
 
                 // запись массива байтов в файл
                 fstream.Write(array, 0, array.Length);
@@ -76,24 +77,51 @@ namespace LbDesyatov1
  
             }
             // === ЧТЕНИЕ ИЗ ФАЙЛА И ВЫВОД НА ЭКРАН ===
-            string fileContent;
-            using (FileStream fs = File.OpenRead(filePath))
+            
+            using (StreamReader reader = new StreamReader(filePath, Encoding.UTF8))
             {
-                byte[] buffer = new byte[fs.Length];
-                fs.Read(buffer, 0, buffer.Length);
-                fileContent = Encoding.Default.GetString(buffer);
+                string text = await reader.ReadToEndAsync();
+                Console.WriteLine(text);
+
+            }
+            Console.Write("\nВведите тип самолёта для поиска: ");
+            string searchPlane = Console.ReadLine();
+
+            // Читаем весь файл
+            string fileContent;
+            using (StreamReader reader = new StreamReader(filePath, Encoding.UTF8))
+            {
+                fileContent = await reader.ReadToEndAsync();
             }
 
-            string[] lines = fileContent.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
-            foreach (string line in lines)
+
+            string pattern =
+                @"Город:\s*(?<city>.+?)\r?\n" +
+                @"Номер рейса:\s*(?<number>\d+)\r?\n" +
+                $@"Тип самолета:\s*{Regex.Escape(searchPlane)}";
+
+            var matches = Regex.Matches(fileContent, pattern, RegexOptions.Multiline);
+
+            if (matches.Count > 0)
             {
-                Console.WriteLine(line); // просто выводим каждую строку как есть
+                Console.WriteLine($"\nНайдены рейсы для самолёта '{searchPlane}':");
+                foreach (Match match in matches)
+                {
+                    string city = match.Groups["city"].Value;
+                    string number = match.Groups["number"].Value;
+                    Console.WriteLine($"Пункт назначения: {city}, Номер рейса: {number}");
+                }
             }
-            Console.WriteLine("=== Данные из файла ===");
-            Console.WriteLine(fileContent);
-            Console.WriteLine("========================");
-            Console.WriteLine($"Файл сохранён по пути: {filePath}");
-            Console.Read();
+            else
+            {
+                Console.WriteLine($"\nРейсов для самолёта '{searchPlane}' не найдено.");
+            }
+
+            Console.WriteLine("\nНажмите любую клавишу для выхода...");
+            Console.ReadKey();
+
+
+
         }
 
     }
