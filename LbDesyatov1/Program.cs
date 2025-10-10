@@ -5,7 +5,7 @@ using System.Text;
 
 namespace LbDesyatov1
 {
-    // Структура заменена на класс (XmlSerializer не работает со struct без дополнительных настроек)
+
     public class Aeroflot
     {
         // XmlSerializer сериализует только public свойства (не поля!)
@@ -13,7 +13,7 @@ namespace LbDesyatov1
         public int number { get; set; }
         public string plane { get; set; }
 
-        // Обязательный конструктор без параметров
+        //конструктор без параметров
         public Aeroflot() { }
 
         // Ваш конструктор
@@ -50,8 +50,10 @@ namespace LbDesyatov1
             string xmlPath = @"C:\Users\avd55\Desktop\Note.xml";
 
             // === СЕРИАЛИЗАЦИЯ В XML ===
+            // Передаем в конструктор тип класса Person и получаем поток куда сохраняем в файл
+
             XmlSerializer serializer = new XmlSerializer(typeof(Aeroflot[]));
-            using (FileStream fs = new FileStream(xmlPath, FileMode.Create))
+            using (FileStream fs = new FileStream(xmlPath, FileMode.OpenOrCreate))
             {
                 serializer.Serialize(fs, PlaneList);
             }
