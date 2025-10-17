@@ -8,14 +8,17 @@ namespace LbDesyatov1
 
     public class Aeroflot
     {
-        // XmlSerializer сериализует только public свойства (не поля!)
+
         public string dist { get; set; }
         public int number { get; set; }
         public string plane { get; set; }
 
         //конструктор без параметров
-        public Aeroflot() { }
-
+        public Aeroflot()
+        {
+            dist = string.Empty;
+            plane = string.Empty;
+        }
         // Ваш конструктор
         public Aeroflot(string name, int count, string type)
         {
@@ -36,7 +39,6 @@ namespace LbDesyatov1
         {
             const int SIZE = 7;
             Aeroflot[] PlaneList = new Aeroflot[SIZE];
-
             Console.WriteLine("Исходный массив:");
             Console.WriteLine("Введите 7 строк в формате: Пункт,Номер,Тип (например: Москва,100,Boeing)");
 
@@ -49,24 +51,23 @@ namespace LbDesyatov1
 
             string xmlPath = @"C:\Users\avd55\Desktop\Note.xml";
 
-            // === СЕРИАЛИЗАЦИЯ В XML ===
-            // Передаем в конструктор тип класса Person и получаем поток куда сохраняем в файл
+            // СЕРИАЛИЗАЦИЯ В XML 
 
             XmlSerializer serializer = new XmlSerializer(typeof(Aeroflot[]));
-            using (FileStream fs = new FileStream(xmlPath, FileMode.OpenOrCreate))
+            using (FileStream fs = new FileStream(xmlPath, FileMode.Create))
             {
                 serializer.Serialize(fs, PlaneList);
             }
             Console.WriteLine("Данные записаны в XML-файл.");
 
-            // === ДЕСЕРИАЛИЗАЦИЯ ИЗ XML ===
+            //  ДЕСЕРИАЛИЗАЦИЯ ИЗ XML 
             Aeroflot[] loadedFlights;
             using (FileStream fs = new FileStream(xmlPath, FileMode.Open))
             {
                 loadedFlights = (Aeroflot[])serializer.Deserialize(fs);
             }
 
-            // === ВЫВОД ВСЕХ РЕЙСОВ ===
+            // ВЫВОД ВСЕХ РЕЙСОВ 
             Console.WriteLine("\nВсе рейсы:");
             for (int i = 0; i < loadedFlights.Length; i++)
             {
@@ -75,42 +76,49 @@ namespace LbDesyatov1
                 Console.WriteLine();
             }
 
-            // === ПОИСК ПО ТИПУ САМОЛЁТА ===
+            // Сортировка
             Console.Write("\nВведите тип самолёта для поиска: ");
-            string searchPlane = Console.ReadLine();
+            string planeType = Console.ReadLine();
 
-            // Собираем найденные рейсы
-            Aeroflot[] foundFlights = new Aeroflot[loadedFlights.Length];
-            int foundCount = 0;
+            // Поиск по типу самолета
+            Aeroflot[] matchingFlights = new Aeroflot[loadedFlights.Length];
+            int count = 0;
 
-            foreach (var flight in loadedFlights)
+            for (int i = 0; i < loadedFlights.Length; i++)
             {
-                if (flight.plane == searchPlane)
+                if (string.Equals(loadedFlights[i].plane, planeType, StringComparison.OrdinalIgnoreCase))
                 {
-                    foundFlights[foundCount] = flight;
-                    foundCount++;
+                    matchingFlights[count] = loadedFlights[i];
+                    count++;
                 }
             }
-
-            if (foundCount == 0)
             {
-                Console.WriteLine($"\nРейсов для самолёта '{searchPlane}' не найдено.");
-            }
-            else
-            {
-                // Обрезаем массив до нужного размера
-                Array.Resize(ref foundFlights, foundCount);
-
-                // Сортируем по пункту назначения (алфавит)
-                Array.Sort(foundFlights, (a, b) => string.Compare(a.dist, b.dist, StringComparison.Ordinal));
-
-                Console.WriteLine($"\nНайдены рейсы для самолёта '{searchPlane}':");
-                foreach (var f in foundFlights)
+                // Обрезаем до реального количества
+                Aeroflot[] filteredFlights = new Aeroflot[count];
+                for (int i = 0; i < count; i++)
                 {
-                    Console.WriteLine($"Пункт назначения: {f.dist}, Номер рейса: {f.number}");
+                    filteredFlights[i] = matchingFlights[i];
+                }
+
+                // Сортировка по алфавиту пункта назначения (пузырьком)
+                for (int i = 0; i < count - 1; i++)
+                {
+                    for (int j = i + 1; j < count; j++)
+                    {
+                        if (string.Compare(filteredFlights[i].dist, filteredFlights[j].dist, StringComparison.OrdinalIgnoreCase) > 0)
+                        {
+                            Aeroflot temp = filteredFlights[i];
+                            filteredFlights[i] = filteredFlights[j];
+                            filteredFlights[j] = temp;
+                        }
+                    }
+                }
+                Console.WriteLine($"\nРейсы для самолёта типа '{planeType}', отсортированные по пункту назначения:");
+                for (int i = 0; i < count; i++)
+                {
+                    filteredFlights[i].PrintInfo();
                 }
             }
-
             Console.WriteLine("\nНажмите любую клавишу для выхода...");
             Console.ReadKey();
         }
