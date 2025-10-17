@@ -13,7 +13,7 @@ namespace LbDesyatov1
         public int number { get; set; }
         public string plane { get; set; }
 
-        //конструктор без параметров
+        //\\\конструктор без параметров
         public Aeroflot()
         {
             dist = string.Empty;
