@@ -48,23 +48,22 @@ namespace LbDesyatov1
                 }
                 else
                 {
-                    PlaneList[i] = new Aeroflot(parts[0].Trim(), int.Parse(parts[1].Trim()), parts[2].Trim());
+                    PlaneList[i] = new Aeroflot(parts[0], int.Parse(parts[1]), parts[2]);
                 }
             }
 
             string jsonPath = @"C:\Users\avd55\Desktop\Note.json";
 
-            // === СЕРИАЛИЗАЦИЯ В JSON ===
-            var options = new JsonSerializerOptions { WriteIndented = true };
-            string jsonString = JsonSerializer.Serialize(PlaneList, options);
+            // СЕРИАЛИЗАЦИЯ В JSON 
+            string jsonString = JsonSerializer.Serialize(PlaneList);
             File.WriteAllText(jsonPath, jsonString);
             Console.WriteLine($"Данные записаны в JSON-файл: {jsonPath}");
 
-            // === ДЕСЕРИАЛИЗАЦИЯ ИЗ JSON ===
+            // ДЕСЕРИАЛИЗАЦИЯ ИЗ JSON 
             string loadedJson = File.ReadAllText(jsonPath);
             Aeroflot[] loadedFlights = JsonSerializer.Deserialize<Aeroflot[]>(loadedJson);
 
-            // === ВЫВОД ВСЕХ РЕЙСОВ ===
+            // ВЫВОД ВСЕХ РЕЙСОВ 
             Console.WriteLine("\nВсе рейсы:");
             for (int i = 0; i < loadedFlights.Length; i++)
             {
@@ -73,9 +72,9 @@ namespace LbDesyatov1
                 Console.WriteLine();
             }
 
-            // === ПОИСК И СОРТИРОВКА ===
+            // ПОИСК И СОРТИРОВКА 
             Console.Write("\nВведите тип самолёта для поиска: ");
-            string planeType = Console.ReadLine().Trim();
+            string planeType = Console.ReadLine();
 
             // Собираем подходящие рейсы
             Aeroflot[] matchingFlights = new Aeroflot[loadedFlights.Length];
@@ -83,7 +82,7 @@ namespace LbDesyatov1
 
             for (int i = 0; i < loadedFlights.Length; i++)
             {
-                if (string.Equals(loadedFlights[i].plane, planeType, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(loadedFlights[i].plane, planeType))
                 {
                     matchingFlights[count] = loadedFlights[i];
                     count++;
@@ -100,12 +99,12 @@ namespace LbDesyatov1
                 Aeroflot[] filteredFlights = new Aeroflot[count];
                 Array.Copy(matchingFlights, filteredFlights, count);
 
-                // Сортировка по алфавиту пункта назначения (пузырьком)
+                // Сортировка по алфавиту пункта назначения 
                 for (int i = 0; i < count - 1; i++)
                 {
                     for (int j = i + 1; j < count; j++)
                     {
-                        if (string.Compare(filteredFlights[i].dist, filteredFlights[j].dist, StringComparison.OrdinalIgnoreCase) > 0)
+                        if (string.Compare(filteredFlights[i].dist, filteredFlights[j].dist) > 0)
                         {
                             Aeroflot temp = filteredFlights[i];
                             filteredFlights[i] = filteredFlights[j];
